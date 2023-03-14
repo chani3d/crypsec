@@ -11,7 +11,7 @@ def client_program():
     while message.lower().strip() != 'bye':
         client_socket.send(message.encode('utf-8'))  # send message
         data = client_socket.recv(4).decode('utf-8')  # receive response
-
+        
         print('Received from server: ' + data)  # show in terminal
 
         message = input(" -> ")  # again take input
