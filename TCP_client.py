@@ -1,17 +1,18 @@
 import socket
 
+
 def client_program():
-    HOST = "153.109.124.198"  # as both code is running on same pc
-    PORT = 6000  # socket server port number
+    host = "153.109.124.198"  # as both code is running on same pc
+    port = 6000  # socket server port number
     client_socket = socket.socket()  # instantiate
-    client_socket.connect((HOST, PORT))  # connect to the server
+    client_socket.connect((host, port))  # connect to the server
 
     message = input(" -> ")  # take input
 
     while message.lower().strip() != 'bye':
         client_socket.send(message.encode('utf-8'))  # send message
         data = client_socket.recv(4).decode('utf-8')  # receive response
-        
+
         print('Received from server: ' + data)  # show in terminal
 
         message = input(" -> ")  # again take input
