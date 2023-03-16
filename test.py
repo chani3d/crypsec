@@ -5,6 +5,22 @@ img = Image.open("pic.png")
 width, height = img.size
 print(f"The image is {width}x{height}")
 
+# To get rgb info
+
+for x in range(img.height):
+    for y in range(img.width):
+        print(y, x)
+
+#img2 = img.convert('RGB')
+#for x in range(img2.width):
+    
+#    r, g, b = img2.getpixel((0, 0))
+#    print(x)
+#    print(r.to_bytes(1, byteorder='big'))
+
+
+
+
 # To take an input from the console
 yoo = input("Your number is: ")
 
@@ -63,5 +79,16 @@ def message(msg):
 
 print(message('hello'))
 
+# Searching something inside a string
 
+fullstring = "Antoine Griezmann Nope"
+substring = "Griezdman"
+substring2 = "Nope"
+substring3 = "Yep"
 
+if substring2 or substring2 in fullstring:
+    print("Found")
+elif substring3 in fullstring:
+    print("Second found")
+else:
+    print("Not found")

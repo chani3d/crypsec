@@ -1,4 +1,5 @@
 import socket
+from ISC_protocol import IscProtocol
 
 
 def client_program():
@@ -20,5 +21,6 @@ def client_program():
     client_socket.close()  # close the connection
 
 
-if __name__ == '__main__':
-    client_program()
+    #if __name__ == '__main__':
+#client_program()
+print(IscProtocol.message("Hello"))
