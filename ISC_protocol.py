@@ -29,6 +29,8 @@ class IscProtocol:
         elif 'task' in msg:
             msgtype = 's'.encode('utf-8')
 
+            fullmsg = header + msgtype +
+
         else:
             msgtype = 't'.encode('utf-8')  # 4th byte
             length = (len(msg)).to_bytes(2, byteorder='big')  # 5th & 6th byte
@@ -40,3 +42,14 @@ class IscProtocol:
             fullmsg = header + msgtype + length + msgbyte
 
         return fullmsg
+
+
+    def decMsg(msg):
+
+        bToStr = msg.decode('utf-8')
+        cleanStr = btoStr.replace('ISCt', '')
+
+        return cleanStr
+        
+
+    

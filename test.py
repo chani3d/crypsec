@@ -92,3 +92,18 @@ elif substring3 in fullstring:
     print("Second found")
 else:
     print("Not found")
+
+# Trying to decode a message received...
+
+def decMsg(msg):
+    btostr = msg.decode('utf-8')
+    finn = btostr.replace('ISCt', '')
+    return finn
+
+
+received = message('test')
+print(received)
+print(decMsg(received))
+
+
+
