@@ -11,7 +11,7 @@ def client_program():
     message = input(" -> ")  # take input
 
     while message.lower().strip() != 'bye':
-        client_socket.send(message.encode('utf-8'))  # send message
+        client_socket.send(IscProtocol.message(message)  # send message
         data = client_socket.recv(4).decode('utf-8')  # receive response
 
         print('Received from server: ' + data)  # show in terminal
@@ -21,6 +21,7 @@ def client_program():
     client_socket.close()  # close the connection
 
 
-    #if __name__ == '__main__':
-#client_program()
-print(IscProtocol.message("Hello"))
+if __name__ == '__main__':
+    client_program()
+
+#print(IscProtocol.message("Hello"))
