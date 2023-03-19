@@ -3,7 +3,7 @@ from PIL import Image
 
 class IscProtocol:
 
-    def encMsg(msg):
+    def encmsg(msg):
 
         header = 'ISC'.encode('utf-8')  # first 3 bytes
         length = bytes()
@@ -26,13 +26,12 @@ class IscProtocol:
 
             fullmsg = header + msgtype + width.to_bytes(1, byteorder='big') + height.to_bytes(1, byteorder='big') + bytergb
 
-        elif 'task' in msg:
-            msgtype = 's'.encode('utf-8')
-
-            fullmsg = header + msgtype +
-
         else:
-            msgtype = 't'.encode('utf-8')  # 4th byte
+            if 'task' in msg:
+                msgtype = 's'.encode('utf-8')  # 4th byte of a command
+            else:
+                msgtype = 't'.encode('utf-8')  # 4th byte of a text
+
             length = (len(msg)).to_bytes(2, byteorder='big')  # 5th & 6th byte
             msgbyte = bytes()  # N next bytes
 
@@ -43,13 +42,9 @@ class IscProtocol:
 
         return fullmsg
 
+    def decmsg(msg):
 
-    def decMsg(msg):
+        btostr = msg.decode('utf-8')
+        cleanstr = btostr.replace('ISCt', '')
 
-        bToStr = msg.decode('utf-8')
-        cleanStr = btoStr.replace('ISCt', '')
-
-        return cleanStr
-        
-
-    
+        return cleanstr

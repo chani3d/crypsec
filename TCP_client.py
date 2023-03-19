@@ -11,7 +11,7 @@ def client_program():
     message = input(" -> ")  # take input
 
     while message.lower().strip() != 'bye':
-        encodedMessage = IscProtocol.encMsg(message)  # using ISC Protocol
+        encodedMessage = IscProtocol.encmsg(message)  # using ISC Protocol
         client_socket.send(encodedMessage)  # send message
         data = client_socket.recv(4).decode('utf-8')  # receive response
         
