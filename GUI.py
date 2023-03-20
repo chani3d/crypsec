@@ -13,6 +13,7 @@ class ChatApp(QWidget):
     def initUI(self):
         # Set up the main window
         self.setWindowTitle('Chat App')
+        self.setStyleSheet("background-color: lightgrey;")
         self.setGeometry(100, 100, 800, 600)
         self.setWindowIcon(QIcon('icon.png'))
 
@@ -35,6 +36,7 @@ class ChatApp(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
+        self.msg_box.setStyleSheet("background-color: grey;")
 
         # Add a text box for typing messages
         self.type_box = QLineEdit()
@@ -45,13 +47,13 @@ class ChatApp(QWidget):
 
         # Add a "send" button
         self.send_button = QPushButton(QIcon('send.png'), '')
-        self.send_button.setStyleSheet('background-color: white; border: none;')
+        self.send_button.setStyleSheet('background-color: lightgrey; border: none;')
         self.send_button.clicked.connect(self.send_message)
         hbox.addWidget(self.send_button)
 
         # Add a "open file" button
         self.open_file_button = QPushButton(QIcon('sendimg.png'), '')
-        self.open_file_button.setStyleSheet('background-color: white; border: none;')
+        self.open_file_button.setStyleSheet('background-color: lightgrey; border: none;')
         self.open_file_button.clicked.connect(self.send_image)
         hbox.addWidget(self.open_file_button)
 
@@ -81,7 +83,7 @@ class ChatApp(QWidget):
         # Move the cursor to the end of the message box
         self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
 
-        # Send a dummy response message
+        # Response message
         response = 'Response'
         response_font = QFont('Arial', 14)
         response_color = QColor(50, 200, 50)
