@@ -14,7 +14,6 @@ def client_program():
         encodedMessage = IscProtocol.encmsg(message)  # using ISC Protocol
         client_socket.send(encodedMessage)  # send message
         data = client_socket.recv(4).decode('utf-8')  # receive response
-        
 
         print('Received from server: ' + data)  # show in terminal
 
@@ -26,4 +25,4 @@ def client_program():
 if __name__ == '__main__':
     client_program()
 
-#print(IscProtocol.message("Hello"))
+# print(IscProtocol.message("Hello"))
