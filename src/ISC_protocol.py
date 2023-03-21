@@ -48,3 +48,7 @@ class IscProtocol:
         cleanstr = btostr.replace('ISCt', '')
 
         return cleanstr
+
+
+
+   # print(decmsg(encmsg("Hello")))

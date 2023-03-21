@@ -1,9 +1,15 @@
 import socket
+import sys
+
+from PyQt6.QtWidgets import QApplication
+
 from ISC_protocol import IscProtocol
+from src.GUI import GUI
 
 
 def client_program():
-    host = "153.109.124.198"  # as both code is running on same pc
+
+    host = "153.109.124.198"
     port = 6000  # socket server port number
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server

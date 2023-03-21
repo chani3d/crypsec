@@ -4,18 +4,26 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt
 
+from src.TCP_client import client_program
 
-class ChatApp(QWidget):
+
+class GUI(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
+
+        # Colors
+        window_color = 'background-color: lightgrey;'
+        msg_box_color = 'background-color: grey;'
+        type_box_color = 'background-color: grey;'
+
         # Set up the main window
         self.setWindowTitle('Chat App')
-        self.setStyleSheet("background-color: lightgrey;")
+        self.setStyleSheet(window_color)
         self.setGeometry(100, 100, 800, 600)
-        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowIcon(QIcon('res/icon.png'))
 
         # Set up the layout
         vbox = QVBoxLayout()
@@ -36,7 +44,7 @@ class ChatApp(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
-        self.msg_box.setStyleSheet("background-color: grey;")
+        self.msg_box.setStyleSheet(msg_box_color)
 
         # Add a text box for typing messages
         self.type_box = QLineEdit()
@@ -44,15 +52,17 @@ class ChatApp(QWidget):
         self.type_box.setFont(type_box_font)
         self.type_box.returnPressed.connect(self.send_message)
         hbox.addWidget(self.type_box)
+        self.type_box.setStyleSheet(type_box_color)
+
 
         # Add a "send" button
-        self.send_button = QPushButton(QIcon('send.png'), '')
+        self.send_button = QPushButton(QIcon('res/send.png'), '')
         self.send_button.setStyleSheet('background-color: lightgrey; border: none;')
         self.send_button.clicked.connect(self.send_message)
         hbox.addWidget(self.send_button)
 
         # Add a "open file" button
-        self.open_file_button = QPushButton(QIcon('sendimg.png'), '')
+        self.open_file_button = QPushButton(QIcon('res/sendimg.png'), '')
         self.open_file_button.setStyleSheet('background-color: lightgrey; border: none;')
         self.open_file_button.clicked.connect(self.send_image)
         hbox.addWidget(self.open_file_button)
@@ -97,5 +107,5 @@ class ChatApp(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    chat_app = ChatApp()
+    chat_app = GUI()
     sys.exit(app.exec())
