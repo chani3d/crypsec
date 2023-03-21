@@ -4,7 +4,6 @@ import sys
 from PyQt6.QtWidgets import QApplication
 
 from ISC_protocol import IscProtocol
-from src.GUI import GUI
 
 
 def client_program():
@@ -19,7 +18,7 @@ def client_program():
     while message.lower().strip() != 'bye':
         encodedMessage = IscProtocol.encmsg(message)  # using ISC Protocol
         client_socket.send(encodedMessage)  # send message
-        data = client_socket.recv(4).decode('utf-8')  # receive response
+        data = IscProtocol.decmsg(client_socket.recv(4))  # receive response
 
         print('Received from server: ' + data)  # show in terminal
 

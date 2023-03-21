@@ -1,16 +1,12 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from GUI import ChatApp
+from GUI import GUI
 from TCP_client import client_program
 
 
-def main():
-    client_program()
-    ChatApp()
-
-
 if __name__ == '__main__':
-    main()
     app = QApplication(sys.argv)
-    chat_app = ChatApp()
+    chat_app = GUI()
+
     sys.exit(app.exec())
+    client_program()
