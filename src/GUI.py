@@ -4,6 +4,9 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt
 
+from src.TCP_client import client_program
+
+
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -51,7 +54,6 @@ class GUI(QWidget):
         hbox.addWidget(self.type_box)
         self.type_box.setStyleSheet(type_box_color)
 
-
         # Add a "send" button
         self.send_button = QPushButton(QIcon('res/send.png'), '')
         self.send_button.setStyleSheet('background-color: lightgrey; border: none;')
@@ -70,6 +72,7 @@ class GUI(QWidget):
         # Show the window
         self.show()
 
+
     def send_image(self):
         fname = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.jpg *.gif)")
 
@@ -82,7 +85,10 @@ class GUI(QWidget):
         message_color = QColor(255, 255, 255)
         self.msg_box.setTextColor(message_color)
         self.msg_box.setFont(message_font)
-        self.msg_box.append(f'You: {message}')
+        if message == "":
+            pass
+        else:
+            self.msg_box.append(f'You: {message}')
 
         # Clear the type box
         self.type_box.clear()
@@ -102,7 +108,11 @@ class GUI(QWidget):
         self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
 
 
-if __name__ == '__main__':
+def open_open_program():
     app = QApplication(sys.argv)
     chat_app = GUI()
     sys.exit(app.exec())
+
+
+if __name__ == '__main__':
+    open_open_program()

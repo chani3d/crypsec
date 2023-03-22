@@ -24,7 +24,8 @@ class IscProtocol:
                     byteb = b.to_bytes(1, byteorder='big')
                     bytergb += byter + byteg + byteb
 
-            fullmsg = header + msgtype + width.to_bytes(1, byteorder='big') + height.to_bytes(1, byteorder='big') + bytergb
+            fullmsg = header + msgtype + width.to_bytes(1, byteorder='big') + height.to_bytes(1,
+                                                                                              byteorder='big') + bytergb
 
         else:
             if 'task' in msg:
@@ -36,7 +37,7 @@ class IscProtocol:
             msgbyte = bytes()  # N next bytes
 
             for element in msg:
-                msgbyte += ((0).to_bytes(3, byteorder='big') + element.encode('utf-8'))
+                msgbyte += (ord(element)).to_bytes(4, byteorder='big')
 
             fullmsg = header + msgtype + length + msgbyte
 
@@ -50,5 +51,4 @@ class IscProtocol:
         return cleanstr
 
 
-
-   # print(decmsg(encmsg("Hello")))
+    #print(decmsg(encmsg('Test')))
