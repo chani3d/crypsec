@@ -4,8 +4,6 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPu
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt
 
-from src.TCP_client import client_program
-
 
 class GUI(QWidget):
     def __init__(self):

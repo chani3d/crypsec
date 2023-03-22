@@ -12,8 +12,9 @@ def client_program():
     port = 6000  # socket server port number
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
+    print('---------------------------\n| Connected to the server |\n---------------------------')
 
-    message = input(" -> ")  # take input
+    message = input(' -> ')  # take input
 
     while message.lower().strip() != 'bye':
         encodedMessage = IscProtocol.encmsg(message)  # encodes message with ISCP
@@ -25,6 +26,9 @@ def client_program():
         message = input(" -> ")  # again take input
 
     client_socket.close()  # close the connection
+
+    if message == 'bye':
+        print('--------------------------------\n| Disconnected from the server |\n--------------------------------')
 
 
 if __name__ == '__main__':

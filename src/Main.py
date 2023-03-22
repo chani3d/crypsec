@@ -9,15 +9,16 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     chat_app = GUI()
 
-    # timer which repate function `display_time` every 1000ms (1s)
+    # timer which repeat "function a" every x
     timer = QTimer()
-    timer.timeout.connect(client_program())  # execute `display_time`
+    timer.timeout.connect(client_program())  # execute "function a"
     timer.setInterval(1000)  # 1000ms = 1s
     timer.start()
 
+    # timer which repeat "function b" every x
     timer2 = QTimer()
-    timer2.timeout.connect(open_open_program())  # execute `display_time`
-    timer2.setInterval(5000)  # 1000ms = 1s
+    timer2.timeout.connect(open_open_program())  # execute "function b"
+    timer2.setInterval(1000)
     timer2.start()
 
     sys.exit(app.exec())
