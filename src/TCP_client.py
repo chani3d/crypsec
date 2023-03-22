@@ -7,7 +7,6 @@ from ISC_protocol import IscProtocol
 
 
 def client_program():
-
     host = "153.109.124.198"
     port = 6000  # socket server port number
     client_socket = socket.socket()  # instantiate
@@ -17,13 +16,13 @@ def client_program():
     message = input(' -> ')  # take input
 
     while message.lower().strip() != 'bye':
-        encodedMessage = IscProtocol.encmsg(message)  # encodes message with ISCP
-        client_socket.send(encodedMessage)  # send message
-        data = IscProtocol.decmsg(client_socket.recv(4))  # decodes response with ISCP
+        encoded_message = IscProtocol.enc_msg(message)  # encodes message with "ISCP"
+        client_socket.send(encoded_message)  # send message
+        data = IscProtocol.dec_msg(client_socket.recv(1024))  # decodes response with "ISCP"
 
         print('Received from server: ' + data)  # show in terminal
 
-        message = input(" -> ")  # again take input
+        message = input(' -> ')  # take input again
 
     client_socket.close()  # close the connection
 

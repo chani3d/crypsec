@@ -1,16 +1,28 @@
 import sys
+import socket
+import datetime
+
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
     QFileDialog
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt
 
+from src.ISC_protocol import IscProtocol
+
 
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.initUI()
+        self.init_gui()
 
-    def initUI(self):
+        # Socket connection
+        host = "153.109.124.198"
+        port = 6000  # socket server port number
+        self.client_socket = socket.socket()  # instantiate
+        self.client_socket.connect((host, port))  # connect to the server
+        print('---------------------------\n| Connected to the server |\n---------------------------')
+
+    def init_gui(self):
 
         # Colors
         window_color = 'background-color: lightgrey;'
@@ -29,7 +41,7 @@ class GUI(QWidget):
         self.setLayout(vbox)
 
         # Add a label for the app name
-        app_name = QLabel('Chat App')
+        app_name = QLabel('Yep')
         app_name_font = QFont('Arial', 24)
         app_name.setFont(app_name_font)
         app_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -70,37 +82,48 @@ class GUI(QWidget):
         # Show the window
         self.show()
 
-
     def send_image(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.jpg *.gif)")
+        fname = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
 
     def send_message(self):
+        # Get actual time
+        time = datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")
+
         # Get the message from the type box
         message = self.type_box.text()
+
+        # Sends message
+        encoded_message = IscProtocol.enc_msg(message)  # encodes message with "ISCP"
+        self.client_socket.send(encoded_message)    # send message
 
         # Add the message to the message box
         message_font = QFont('Arial', 14)
         message_color = QColor(255, 255, 255)
         self.msg_box.setTextColor(message_color)
         self.msg_box.setFont(message_font)
-        if message == "":
+        if message == '':
             pass
         else:
-            self.msg_box.append(f'You: {message}')
+            self.msg_box.append(f'{time} - You : {message}')
 
-        # Clear the type box
+        # Clear the type box once a message is sent
         self.type_box.clear()
 
         # Move the cursor to the end of the message box
         self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
 
         # Response message
-        response = 'Response'
+        response = IscProtocol.dec_msg(self.client_socket.recv(1024))
         response_font = QFont('Arial', 14)
         response_color = QColor(50, 200, 50)
+
         self.msg_box.setTextColor(response_color)
         self.msg_box.setFont(response_font)
-        self.msg_box.append(f'Someone: {response}')
+
+        if response == message:
+            self.msg_box.append('Same')
+        else:
+            self.msg_box.append(f'{time} - Someone: {response}')
 
         # Move the cursor to the end of the message box
         self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
