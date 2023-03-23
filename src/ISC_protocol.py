@@ -34,6 +34,7 @@ class IscProtocol:
             msgbyte = bytes()  # N next bytes
 
             for element in msg:
+                # msgbyte += ((0).to_bytes(4, 'big')) + element.encode('utf-8')
                 msgbyte += (ord(element)).to_bytes(4, 'big')
 
             fullmsg = header + msgtype + length + msgbyte
@@ -61,4 +62,4 @@ class IscProtocol:
     def dec_rsa(msg):
         pass
 
-    # print(dec_msg(enc_msg('Test')))
+    #print(enc_msg('Test'))

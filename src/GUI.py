@@ -1,26 +1,23 @@
-import sys
-import socket
 import datetime
+import socket
 
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
     QFileDialog
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 
-from src.ISC_protocol import IscProtocol
+from ISC_protocol import IscProtocol
+from src.TCP_client import TCPClient
 
 
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
+        self.client_socket = socket.socket()
         self.init_gui()
 
-        # Socket connection
-        host = "153.109.124.198"
-        port = 6000  # socket server port number
-        self.client_socket = socket.socket()  # instantiate
-        self.client_socket.connect((host, port))  # connect to the server
-        print('---------------------------\n| Connected to the server |\n---------------------------')
+        TCPClient.server_connection(self)
+        self.reception_timer()
 
     def init_gui(self):
 
@@ -83,57 +80,49 @@ class GUI(QWidget):
         self.show()
 
     def send_image(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
+        message = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
+        TCPClient.send_message_server(self, message)
 
     def send_message(self):
-        # Get actual time
-        time = datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")
-
         # Get the message from the type box
         message = self.type_box.text()
 
         # Sends message
-        encoded_message = IscProtocol.enc_msg(message)  # encodes message with "ISCP"
-        self.client_socket.send(encoded_message)    # send message
-
-        # Add the message to the message box
-        message_font = QFont('Arial', 14)
-        message_color = QColor(255, 255, 255)
-        self.msg_box.setTextColor(message_color)
-        self.msg_box.setFont(message_font)
         if message == '':
             pass
         else:
-            self.msg_box.append(f'{time} - You : {message}')
+            TCPClient.send_message_server(self, message)
+
+            # Add the message to the message box
+            message_font = QFont('Arial', 14)
+            message_color = QColor(255, 255, 255)
+            self.msg_box.setTextColor(message_color)
+            self.msg_box.setFont(message_font)
+            self.msg_box.append(f'{datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")} - You : {message}')
 
         # Clear the type box once a message is sent
         self.type_box.clear()
 
+    def response_message(self):
         # Move the cursor to the end of the message box
         self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
 
         # Response message
-        response = IscProtocol.dec_msg(self.client_socket.recv(1024))
-        response_font = QFont('Arial', 14)
-        response_color = QColor(50, 200, 50)
+        try:
+            response = IscProtocol.dec_msg(self.client_socket.recv(1024))
 
-        self.msg_box.setTextColor(response_color)
-        self.msg_box.setFont(response_font)
+            response_font = QFont('Arial', 14)
+            response_color = QColor(50, 200, 50)
+            self.msg_box.setTextColor(response_color)
+            self.msg_box.setFont(response_font)
+            self.msg_box.append(f'{datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")} - Server: {response}')
 
-        if response == message:
-            self.msg_box.append('Same')
-        else:
-            self.msg_box.append(f'{time} - Someone: {response}')
+            # Move the cursor to the end of the message box
+            self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
+        except socket.timeout:
+            pass
 
-        # Move the cursor to the end of the message box
-        self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
-
-
-def open_open_program():
-    app = QApplication(sys.argv)
-    chat_app = GUI()
-    sys.exit(app.exec())
-
-
-if __name__ == '__main__':
-    open_open_program()
+    def reception_timer(self):
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.response_message)
+        self.timer.start(250)

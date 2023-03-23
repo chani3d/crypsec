@@ -1,9 +1,22 @@
 import socket
-import sys
-
-from PyQt6.QtWidgets import QApplication
-
 from ISC_protocol import IscProtocol
+
+
+class TCPClient:
+
+    def server_connection(self):
+        host = "153.109.124.198"
+        port = 6000  # socket server port number
+        self.client_socket = socket.socket()  # instantiate
+        self.client_socket.connect((host, port))  # connect to the server
+        self.client_socket.settimeout(0.1)
+
+    def send_message_server(self, message):
+        encoded_message = IscProtocol.enc_msg(message)  # encodes message with "ISCP"
+        self.client_socket.send(encoded_message)  # send message
+
+    def receive_message_server(self):
+        IscProtocol.dec_msg(self.client_socket.recv(1024))
 
 
 def client_program():
