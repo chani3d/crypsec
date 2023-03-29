@@ -48,6 +48,17 @@ class IscProtocol:
 
         return cleanstr
 
+
+    # Shift
+    def shift(originsalstring, key):
+        cryptedstring = ''
+
+        for element in originalstring:
+            crpytedstring += chr(ord(element) + key)
+            
+        return crpytedstring
+
+
     # Vigenere
     def enc_vgnr(msg):
         pass
