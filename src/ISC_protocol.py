@@ -41,7 +41,7 @@ class IscProtocol:
 
         return fullmsg
 
-    def dec_msg(msg):
+    def dec_msg(msg:bytes):
 
         btostr = msg.decode('utf-8')
         cleanstr = btostr.replace('ISCt', '')
