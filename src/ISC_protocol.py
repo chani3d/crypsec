@@ -41,22 +41,31 @@ class IscProtocol:
 
         return fullmsg
 
-    def dec_msg(msg:bytes):
-
+    def dec_msg(msg):
         btostr = msg.decode('utf-8')
-        cleanstr = btostr.replace('ISCt', '')
+
+        if btostr.startswith('ISCt'):
+            cleanstr = btostr.replace('ISCt', '')
+
+        elif btostr.startswith('ISCi'):
+            pass
+            #cleanstr = btostr.replace('ISCi', '')
+
+        elif btostr.startswith('ISCs'):
+            cleanstr = btostr.replace('ISCs', '')
+
 
         return cleanstr
 
 
     # Shift
-    def shift(originsalstring, key):
+    def shift(msg, key):
         cryptedstring = ''
 
-        for element in originalstring:
-            crpytedstring += chr(ord(element) + key)
+        for element in msg:
+            cryptedstring += chr(ord(element) + key)
             
-        return crpytedstring
+        return cryptedstring
 
 
     # Vigenere

@@ -2,12 +2,12 @@ import datetime
 import socket
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
-    QFileDialog
+    QFileDialog, QComboBox
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt, QTimer
 
 from ISC_protocol import IscProtocol
-from src.TCP_client import TCPClient
+from TCP_client import TCPClient
 
 
 class GUI(QWidget):
@@ -38,7 +38,7 @@ class GUI(QWidget):
         self.setLayout(vbox)
 
         # Add a label for the app name
-        app_name = QLabel('Yep')
+        app_name = QLabel('Yepzhapp')
         app_name_font = QFont('Arial', 24)
         app_name.setFont(app_name_font)
         app_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -73,11 +73,32 @@ class GUI(QWidget):
         self.open_file_button.clicked.connect(self.send_image)
         hbox.addWidget(self.open_file_button)
 
+        # Add a "encryption" button
+        self.encrypt_button = QPushButton()
+        self.encrypt_button.setText('Encrypt')
+        self.encrypt_button.clicked.connect(self.encrypt_box)
+        vbox.addWidget(self.encrypt_button)
+
         # Add the horizontal layout to the vertical layout
         vbox.addLayout(hbox)
 
         # Show the window
         self.show()
+
+    def encrypt_box(self):
+        box = QVBoxLayout()
+        text = QLabel('Select an encryption method')
+        text_font = QFont('Arial', 14)
+        text.setFont(text_font)
+        text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        box.addWidget(text)
+
+        encryption_methods = ["Shift", "Vigenere", "RSA"]
+        self.encrypt_box = QComboBox()
+        self.encrypt_box.addItems(encryption_methods)
+        shift_button_font = QFont('Arial', 14)
+        self.encrypt_box.show()
+
 
     def send_image(self):
         message = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
@@ -96,9 +117,10 @@ class GUI(QWidget):
             # Add the message to the message box
             message_font = QFont('Arial', 14)
             message_color = QColor(255, 255, 255)
+            time = datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")
             self.msg_box.setTextColor(message_color)
             self.msg_box.setFont(message_font)
-            self.msg_box.append(f'{datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")} - You : {message}')
+            self.msg_box.append(f'{time} - You : {message}')
 
         # Clear the type box once a message is sent
         self.type_box.clear()
@@ -113,9 +135,10 @@ class GUI(QWidget):
 
             response_font = QFont('Arial', 14)
             response_color = QColor(50, 200, 50)
+            time = datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")
             self.msg_box.setTextColor(response_color)
             self.msg_box.setFont(response_font)
-            self.msg_box.append(f'{datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")} - Server: {response}')
+            self.msg_box.append(f'{time} - Server: {response}')
 
             # Move the cursor to the end of the message box
             self.msg_box.moveCursor(QTextCursor.MoveOperation.End)
