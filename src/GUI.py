@@ -15,7 +15,6 @@ class GUI(QWidget):
         super().__init__()
         self.client_socket = socket.socket()
         self.init_gui()
-
         TCPClient.server_connection(self)
         self.reception_timer()
 

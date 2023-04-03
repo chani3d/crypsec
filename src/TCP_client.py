@@ -5,7 +5,7 @@ from ISC_protocol import IscProtocol
 class TCPClient:
 
     def server_connection(self):
-        host = "153.109.124.198"
+        host = '153.109.124.198'
         port = 6000  # socket server port number
         self.client_socket = socket.socket()  # instantiate
         self.client_socket.connect((host, port))  # connect to the server

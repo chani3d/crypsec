@@ -49,7 +49,8 @@ class IscProtocol:
 
         elif btostr.startswith('ISCi'):
             pass
-            #cleanstr = btostr.replace('ISCi', '')
+            cleanstr = btostr.replace('ISCi', '')
+            cleanstr = bt
 
         elif btostr.startswith('ISCs'):
             cleanstr = btostr.replace('ISCs', '')
@@ -82,4 +83,4 @@ class IscProtocol:
     def dec_rsa(msg):
         pass
 
-    #print(enc_msg('Test'))
+    print(enc_msg('pic.png'))
