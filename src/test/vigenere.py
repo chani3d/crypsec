@@ -11,3 +11,18 @@ def shifenc(originalstring, key):
     return cryptedstring
 
 
+#Vigenere
+
+def vigenc(originalstring):
+    for element in 
+    pass
+
+def vigdenc():
+    pass
+
+letter = 'Ak'
+orden = (ord(letter))
+print(orden)
+
+
+

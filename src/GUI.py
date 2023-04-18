@@ -2,7 +2,7 @@ import datetime
 import socket
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
-    QFileDialog, QComboBox
+    QFileDialog, QComboBox, QGroupBox, QRadioButton
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt, QTimer
 
@@ -28,7 +28,7 @@ class GUI(QWidget):
         # Set up the main window
         self.setWindowTitle('Chat App')
         self.setStyleSheet(window_color)
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1000, 600)
         self.setWindowIcon(QIcon('res/icon.png'))
 
         # Set up the layout
@@ -52,6 +52,12 @@ class GUI(QWidget):
         vbox.addWidget(self.msg_box)
         self.msg_box.setStyleSheet(msg_box_color)
 
+        # Add a group for encryption options
+        self.encr_box = QGroupBox(str("Encryption"))
+        radio1 = QRadioButton(str('Radio button try'))
+
+        vbox.addWidget(self.encr_box)
+
         # Add a text box for typing messages
         self.type_box = QLineEdit()
         type_box_font = QFont('Arial', 14)
@@ -73,10 +79,10 @@ class GUI(QWidget):
         hbox.addWidget(self.open_file_button)
 
         # Add a "encryption" button
-        self.encrypt_button = QPushButton()
-        self.encrypt_button.setText('Encrypt')
-        self.encrypt_button.clicked.connect(self.encrypt_box)
-        vbox.addWidget(self.encrypt_button)
+        # self.encrypt_button = QPushButton()
+        # self.encrypt_button.setText('Encrypt')
+        # self.encrypt_button.clicked.connect(self.encrypt_box)
+        # vbox.addWidget(self.encrypt_button)
 
         # Add the horizontal layout to the vertical layout
         vbox.addLayout(hbox)
@@ -84,19 +90,19 @@ class GUI(QWidget):
         # Show the window
         self.show()
 
-    def encrypt_box(self):
-        box = QVBoxLayout()
-        text = QLabel('Select an encryption method')
-        text_font = QFont('Arial', 14)
-        text.setFont(text_font)
-        text.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        box.addWidget(text)
-
-        encryption_methods = ["Shift", "Vigenere", "RSA"]
-        self.encrypt_box = QComboBox()
-        self.encrypt_box.addItems(encryption_methods)
-        shift_button_font = QFont('Arial', 14)
-        self.encrypt_box.show()
+    # def encrypt_box(self):
+    #     box = QVBoxLayout()
+    #     text = QLabel('Select an encryption method')
+    #     text_font = QFont('Arial', 14)
+    #     text.setFont(text_font)
+    #     text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    #     box.addWidget(text)
+    #
+    #     encryption_methods = ["Shift", "Vigenere", "RSA"]
+    #     self.encrypt_box = QComboBox()
+    #     self.encrypt_box.addItems(encryption_methods)
+    #     shift_button_font = QFont('Arial', 14)
+    #     self.encrypt_box.show()
 
 
     def send_image(self):
