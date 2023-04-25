@@ -1,7 +1,7 @@
 import datetime
 import socket
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
     QFileDialog, QComboBox, QGroupBox, QRadioButton
 from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
 from PyQt6.QtCore import Qt, QTimer
@@ -32,6 +32,7 @@ class GUI(QWidget):
         self.setWindowIcon(QIcon('res/icon.png'))
 
         # Set up the layout
+        poppabox = QGridLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
         self.setLayout(vbox)
@@ -52,11 +53,12 @@ class GUI(QWidget):
         vbox.addWidget(self.msg_box)
         self.msg_box.setStyleSheet(msg_box_color)
 
-        # Add a group for encryption options
-        self.encr_box = QGroupBox(str("Encryption"))
-        radio1 = QRadioButton(str('Radio button try'))
+        # Add a box for encryption options
+        self.encr_box = QLineEdit()
+        encr_box_font = QFont('Arial', 14)
+        self.encr_box.setFont(encr_box_font)
+        hbox.addWidget(self.encr_box)
 
-        vbox.addWidget(self.encr_box)
 
         # Add a text box for typing messages
         self.type_box = QLineEdit()
@@ -78,32 +80,11 @@ class GUI(QWidget):
         self.open_file_button.clicked.connect(self.send_image)
         hbox.addWidget(self.open_file_button)
 
-        # Add a "encryption" button
-        # self.encrypt_button = QPushButton()
-        # self.encrypt_button.setText('Encrypt')
-        # self.encrypt_button.clicked.connect(self.encrypt_box)
-        # vbox.addWidget(self.encrypt_button)
-
         # Add the horizontal layout to the vertical layout
         vbox.addLayout(hbox)
 
         # Show the window
         self.show()
-
-    # def encrypt_box(self):
-    #     box = QVBoxLayout()
-    #     text = QLabel('Select an encryption method')
-    #     text_font = QFont('Arial', 14)
-    #     text.setFont(text_font)
-    #     text.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    #     box.addWidget(text)
-    #
-    #     encryption_methods = ["Shift", "Vigenere", "RSA"]
-    #     self.encrypt_box = QComboBox()
-    #     self.encrypt_box.addItems(encryption_methods)
-    #     shift_button_font = QFont('Arial', 14)
-    #     self.encrypt_box.show()
-
 
     def send_image(self):
         message = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
