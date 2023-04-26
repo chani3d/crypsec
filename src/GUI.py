@@ -43,8 +43,7 @@ class GUI(QWidget):
         app_name_font = QFont('Arial', 24)
         app_name.setFont(app_name_font)
         app_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # Adds the widget at position 0x0 and occupies 1 row and 5 columns
-        poppabox.addWidget(app_name, 0, 0, 1, 5)
+        poppabox.addWidget(app_name, 0, 0, 1, 5) # Adds the widget at position 0x0 and occupies 1 row and 5 columns
 
         # Add a text box for messages
         self.msg_box = QTextEdit()
@@ -53,8 +52,7 @@ class GUI(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
-        # Adds the widget at position 1x0 and occupies 15 rows and 1 column 
-        poppabox.addLayout(vbox, 1, 0, 15, 1)
+        poppabox.addLayout(vbox, 1, 0, 15, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
         self.msg_box.setStyleSheet(msg_box_color)
 
         # Add a box for encryption options
@@ -62,18 +60,30 @@ class GUI(QWidget):
         encr_box_font = QFont('Arial', 18)
         self.encr_box_title.setFont(encr_box_font)
         self.encr_box_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.shift = QGroupBox(str("Shift"))
-        self.vigenere = QGroupBox(str("Vigenere"))
-        self.rsa = QGroupBox(str("RSA"))
-        self.hash = QGroupBox(str("Hash"))
-        self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
-
         poppabox.addWidget(self.encr_box_title, 1, 1)
+
+        # Shift 
+        self.shift = QGroupBox(str("Shift"))
         poppabox.addWidget(self.shift, 2, 1)
+
+        # Vigenere
+        self.vigenere = QGroupBox(str("Vigenere"))
         poppabox.addWidget(self.vigenere, 3, 1)
+
+        # RSA
+        self.rsa = QGroupBox(str("RSA"))
         poppabox.addWidget(self.rsa, 4, 1)
-        poppabox.addWidget(self.hash, 5, 1)
-        poppabox.addWidget(self.diffie_hellman, 6, 1)
+
+        # Hash
+        self.hash = QGroupBox(str("Hash"))
+        poppabox.addWidget(self.hash, 5, 1, 5, 1)
+        self.hash_msg_box = QLineEdit()
+        poppabox.addWidget(self.hash_msg_box, 6, 1)
+        self.hash_msg_box.setEchoMode(QLineEdit.EchoMode.Password)
+        
+        # Diffie-Hellman
+        self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
+        poppabox.addWidget(self.diffie_hellman, 10, 1)
 
         # Add a text box for typing messages
         self.type_box = QLineEdit()

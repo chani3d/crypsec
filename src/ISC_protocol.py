@@ -135,7 +135,7 @@ class IscProtocol:
     def dec_rsa(msg, key):
         n, k = key
         return pow(message, k, n)
-
+    # Hash
     def enc_hash(msg):
         bytedstring = msg.encode('utf-8')
         h = hashlib.sha256(bytedstring).hexdigest()
