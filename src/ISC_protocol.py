@@ -1,4 +1,6 @@
 from PIL import Image
+import random
+import math
 
 
 class IscProtocol:
@@ -70,17 +72,68 @@ class IscProtocol:
 
 
     # Vigenere
-    def enc_vgnr(msg):
-        pass
+    def enc_vgnr(plaintext, keyword):
+        # Remove all non-alphabetic characters from plaintext and convert to uppercase
+        plaintext = ''.join(c for c in plaintext if c.isalpha()).upper()
 
-    def dec_vgnr(msg):
-        pass
+        # Repeat the keyword to match the length of the plaintext
+        keyword = (keyword * (len(plaintext) // len(keyword) + 1))[:len(plaintext)]
+
+        # Generate the ciphertext by shifting each character of the plaintext by the corresponding
+        # character of the keyword using the Vigenère table
+        ciphertext = ''
+        for i in range(len(plaintext)):
+            plaintext_char = plaintext[i]
+            keyword_char = keyword[i]
+            shift = ord(keyword_char) - ord('A')
+            ciphertext_char = chr((ord(plaintext_char) - ord('A') + shift) % 26 + ord('A'))
+            ciphertext += ciphertext_char
+
+        return ciphertext
+
+    def dec_vgnr(ciphertext, key):
+        # Repeat the keyword to match the length of the ciphertext
+        keyword = (keyword * (len(ciphertext) // len(keyword) + 1))[:len(ciphertext)]
+
+        # Generate the plaintext by shifting each character of the ciphertext backwards by the
+        # corresponding character of the keyword using the Vigenère table
+        plaintext = ''
+        for i in range(len(ciphertext)):
+            ciphertext_char = ciphertext[i]
+            keyword_char = keyword[i]
+            shift = ord(keyword_char) - ord('A')
+            plaintext_char = chr((ord(ciphertext_char) - ord('A') - shift) % 26 + ord('A'))
+            plaintext += plaintext_char
+
+        return plaintext
 
     # RSA
-    def enc_rsa(msg):
-        pass
+    def generate_keys():
+        # Choose two large distinct prime numbers
+        p = 31
+        q = 37
 
-    def dec_rsa(msg):
-        pass
+        # Calculate n and phi(n)
+        n = p * q
+        phi_n = (p - 1) * (q - 1)
 
+        # Choose an integer e such that 1 < e < phi(n) and gcd(e, phi(n)) = 1
+        e = random.randint(2, phi_n - 1)
+        while math.gcd(e, phi_n) != 1:
+            e = random.randint(2, phi_n - 1)
+
+        # Calculate the modular multiplicative inverse d of e modulo phi(n)
+        d = pow(e, -1, phi_n)
+
+        # Return the public and private keys as tuples of two values each: (n, e) and (n, d)
+        public_key = (n, e)
+        private_key = (n, d)
+
+        return (public_key, private_key)
+
+    def dec_rsa(msg, key):
+        n, k = key
+        return pow(message, k, n)
+
+    # Test
     print(enc_msg('pic.png'))
