@@ -1,6 +1,7 @@
 from PIL import Image
 import random
 import math
+import hashlib
 
 
 class IscProtocol:
@@ -135,5 +136,12 @@ class IscProtocol:
         n, k = key
         return pow(message, k, n)
 
+    def enc_hash(msg):
+        bytedstring = msg.encode('utf-8')
+        h = hashlib.sha256(bytedstring).hexdigest()
+        return h
+        
+        
+
     # Test
-    print(enc_msg('pic.png'))
+    print(enc_hash('paco'))

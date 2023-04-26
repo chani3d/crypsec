@@ -35,14 +35,16 @@ class GUI(QWidget):
         poppabox = QGridLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
-        self.setLayout(vbox)
+        # self.setLayout(vbox)
+        self.setLayout(poppabox)
 
         # Add a label for the app name
         app_name = QLabel('Yepzhapp')
         app_name_font = QFont('Arial', 24)
         app_name.setFont(app_name_font)
         app_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vbox.addWidget(app_name)
+        # Adds the widget at position 0x0 and occupies 1 row and 5 columns
+        poppabox.addWidget(app_name, 0, 0, 1, 5)
 
         # Add a text box for messages
         self.msg_box = QTextEdit()
@@ -51,14 +53,27 @@ class GUI(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
+        # Adds the widget at position 1x0 and occupies 15 rows and 1 column 
+        poppabox.addLayout(vbox, 1, 0, 15, 1)
         self.msg_box.setStyleSheet(msg_box_color)
 
         # Add a box for encryption options
-        self.encr_box = QLineEdit()
-        encr_box_font = QFont('Arial', 14)
-        self.encr_box.setFont(encr_box_font)
-        hbox.addWidget(self.encr_box)
+        self.encr_box_title = QLabel("Encryption methods")
+        encr_box_font = QFont('Arial', 18)
+        self.encr_box_title.setFont(encr_box_font)
+        self.encr_box_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.shift = QGroupBox(str("Shift"))
+        self.vigenere = QGroupBox(str("Vigenere"))
+        self.rsa = QGroupBox(str("RSA"))
+        self.hash = QGroupBox(str("Hash"))
+        self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
 
+        poppabox.addWidget(self.encr_box_title, 1, 1)
+        poppabox.addWidget(self.shift, 2, 1)
+        poppabox.addWidget(self.vigenere, 3, 1)
+        poppabox.addWidget(self.rsa, 4, 1)
+        poppabox.addWidget(self.hash, 5, 1)
+        poppabox.addWidget(self.diffie_hellman, 6, 1)
 
         # Add a text box for typing messages
         self.type_box = QLineEdit()
