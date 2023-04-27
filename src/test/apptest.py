@@ -1,5 +1,5 @@
 
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel
 import sys
 
 class MyWidget(QWidget):
@@ -28,4 +28,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     widget = MyWidget()
     widget.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

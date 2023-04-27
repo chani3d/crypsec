@@ -25,13 +25,13 @@ class GUI(QWidget):
         msg_box_color = 'background-color: grey;'
         type_box_color = 'background-color: grey;'
 
-        # Set up the main window
+        # Main window
         self.setWindowTitle('Chat App')
         self.setStyleSheet(window_color)
         self.setGeometry(100, 100, 1000, 600)
         self.setWindowIcon(QIcon('res/icon.png'))
 
-        # Set up the layout
+        # Layout
         poppabox = QGridLayout()
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
@@ -55,36 +55,6 @@ class GUI(QWidget):
         poppabox.addLayout(vbox, 1, 0, 15, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
         self.msg_box.setStyleSheet(msg_box_color)
 
-        # Add a box for encryption options
-        self.encr_box_title = QLabel("Encryption methods")
-        encr_box_font = QFont('Arial', 18)
-        self.encr_box_title.setFont(encr_box_font)
-        self.encr_box_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        poppabox.addWidget(self.encr_box_title, 1, 1)
-
-        # Shift 
-        self.shift = QGroupBox(str("Shift"))
-        poppabox.addWidget(self.shift, 2, 1)
-
-        # Vigenere
-        self.vigenere = QGroupBox(str("Vigenere"))
-        poppabox.addWidget(self.vigenere, 3, 1)
-
-        # RSA
-        self.rsa = QGroupBox(str("RSA"))
-        poppabox.addWidget(self.rsa, 4, 1)
-
-        # Hash
-        self.hash = QGroupBox(str("Hash"))
-        poppabox.addWidget(self.hash, 5, 1, 5, 1)
-        self.hash_msg_box = QLineEdit()
-        poppabox.addWidget(self.hash_msg_box, 6, 1)
-        self.hash_msg_box.setEchoMode(QLineEdit.EchoMode.Password)
-        
-        # Diffie-Hellman
-        self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
-        poppabox.addWidget(self.diffie_hellman, 10, 1)
-
         # Add a text box for typing messages
         self.type_box = QLineEdit()
         type_box_font = QFont('Arial', 14)
@@ -92,6 +62,7 @@ class GUI(QWidget):
         self.type_box.returnPressed.connect(self.send_message)
         hbox.addWidget(self.type_box)
         self.type_box.setStyleSheet(type_box_color)
+
 
         # Add a "send" button
         self.send_button = QPushButton(QIcon('res/send.png'), '')
@@ -105,11 +76,71 @@ class GUI(QWidget):
         self.open_file_button.clicked.connect(self.send_image)
         hbox.addWidget(self.open_file_button)
 
+
+        # Add a box for encryption options
+        self.encr_box_title = QLabel("Encryption methods")
+        encr_box_font = QFont('Arial', 18)
+        self.encr_box_title.setFont(encr_box_font)
+        self.encr_box_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.encr_box_title, 1, 1)
+
+        # Shift 
+        self.shift = QGroupBox(str("Shift"))
+        poppabox.addWidget(self.shift, 2, 1, 5, 1)
+
+        self.shift_key = QLineEdit(str("Key"))
+        poppabox.addWidget(self.shift_key, 3, 1)
+
+        self.shifted = QLineEdit(str("Shifted text"))
+        poppabox.addWidget(self.shifted, 4, 1)
+
+        # Connects the boxes in case something has changed
+        self.type_box.textChanged.connect(self.shift_update)
+        self.shift_key.textChanged.connect(self.shift_update)
+
+        # Vigenere cipher
+        self.vigenere = QGroupBox(str("Vigenere cipher"))
+        poppabox.addWidget(self.vigenere, 9, 1)
+
+        # RSA
+        self.rsa = QGroupBox(str("RSA"))
+        poppabox.addWidget(self.rsa, 8, 1)
+
+        # Hash
+        self.hash = QGroupBox(str("Hash"))
+        poppabox.addWidget(self.hash, 5, 1, 5, 1)
+        self.hash_msg_box = QLineEdit()
+        poppabox.addWidget(self.hash_msg_box, 6, 1)
+
+        self.type_box.textChanged.connect(self.hash_update)
+        
+        # Diffie-Hellman
+        self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
+        poppabox.addWidget(self.diffie_hellman, 10, 1)
+
         # Add the horizontal layout to the vertical layout
         vbox.addLayout(hbox)
 
         # Show the window
         self.show()
+
+    def shift_update(self):
+        msg = self.type_box.text()
+        string_key = self.shift_key.text()
+
+        # Check if the box is empty
+        if string_key == '' or string_key == 'Key':
+            key = 0
+        else:
+            key = int(string_key)
+
+        text = IscProtocol.shift(msg, key)
+        self.shifted.setText(text)
+        
+
+    def hash_update(self):
+        text = IscProtocol.enc_hash(self.type_box.text())
+        self.hash_msg_box.setText(text)
 
     def send_image(self):
         message = QFileDialog.getOpenFileName(self, 'Open image', 'c:\\', "Image files (*.png *.gif)")
