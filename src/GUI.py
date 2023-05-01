@@ -128,11 +128,11 @@ class GUI(QWidget):
         msg = self.type_box.text()
         string_key = self.shift_key.text()
 
-        # Check if the box is empty
-        if string_key == '' or string_key == 'Key':
-            key = 0
-        else:
+        # Check if the box is only numeric
+        if string_key.isnumeric():
             key = int(string_key)
+        else:
+            key = 0
 
         text = IscProtocol.shift(msg, key)
         self.shifted.setText(text)
