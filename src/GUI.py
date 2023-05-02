@@ -26,7 +26,7 @@ class GUI(QWidget):
         type_box_color = 'background-color: grey;'
 
         # Main window
-        self.setWindowTitle('Chat App')
+        self.setWindowTitle('Yepzhapp | SJCG - ISC 2023')
         self.setStyleSheet(window_color)
         self.setGeometry(100, 100, 1000, 600)
         self.setWindowIcon(QIcon('res/icon.png'))

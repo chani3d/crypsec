@@ -73,24 +73,14 @@ class IscProtocol:
 
 
     # Vigenere
-    def enc_vgnr(plaintext, keyword):
-        # Remove all non-alphabetic characters from plaintext and convert to uppercase
-        plaintext = ''.join(c for c in plaintext if c.isalpha()).upper()
-
-        # Repeat the keyword to match the length of the plaintext
-        keyword = (keyword * (len(plaintext) // len(keyword) + 1))[:len(plaintext)]
-
-        # Generate the ciphertext by shifting each character of the plaintext by the corresponding
-        # character of the keyword using the Vigenère table
-        ciphertext = ''
+    def enc_vgnr(plaintext, key):
+        cipher_text = []
         for i in range(len(plaintext)):
-            plaintext_char = plaintext[i]
-            keyword_char = keyword[i]
-            shift = ord(keyword_char) - ord('A')
-            ciphertext_char = chr((ord(plaintext_char) - ord('A') + shift) % 26 + ord('A'))
-            ciphertext += ciphertext_char
-
-        return ciphertext
+            x = (ord(plaintext[i]) +
+                 ord(key[i])) % 26
+            x += ord('A')
+            cipher_text.append(chr(x))
+        return("" . join(cipher_text))
 
     def dec_vgnr(ciphertext, key):
         # Repeat the keyword to match the length of the ciphertext
@@ -141,7 +131,7 @@ class IscProtocol:
         h = hashlib.sha256(bytedstring).hexdigest()
         return h
         
-        
-
+    plaintext = 'hello world'
+    key = 'key'    
     # Test
-    print(enc_hash('paco'))
+    print(enc_vgnr(plaintext, key))
