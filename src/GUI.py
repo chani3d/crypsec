@@ -52,7 +52,7 @@ class GUI(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
-        poppabox.addLayout(vbox, 1, 0, 15, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
+        poppabox.addLayout(vbox, 1, 0, 50, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
         self.msg_box.setStyleSheet(msg_box_color)
 
         # Add a text box for typing messages
@@ -86,9 +86,10 @@ class GUI(QWidget):
 
         # Shift 
         self.shift = QGroupBox(str("Shift"))
-        poppabox.addWidget(self.shift, 2, 1, 5, 1)
+        self.shift.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.shift, 2, 1, 4, 1)
 
-        self.shift_key = QLineEdit(str("Key"))
+        self.shift_key = QLineEdit(str("Enter a key"))
         poppabox.addWidget(self.shift_key, 3, 1)
 
         self.shifted = QLineEdit(str("Shifted text"))
@@ -99,24 +100,41 @@ class GUI(QWidget):
         self.shift_key.textChanged.connect(self.shift_update)
 
         # Vigenere cipher
-        self.vigenere = QGroupBox(str("Vigenere cipher"))
-        poppabox.addWidget(self.vigenere, 9, 1)
+        self.vgnr = QGroupBox(str("Vigenere cipher"))
+        self.vgnr.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.vgnr, 6, 1, 5, 1)
+
+        self.vgnr_key = QLineEdit(str("Enter a key"))
+        poppabox.addWidget(self.vgnr_key, 7, 1)
+        
+        self.encrypted_vgnr = QLineEdit(str("Encrypted"))
+        poppabox.addWidget(self.encrypted_vgnr, 8, 1)
+
+        self.decrypted_vgnr = QLineEdit(str("Decrypted"))
+        poppabox.addWidget(self.decrypted_vgnr, 9, 1)
+
+        self.type_box.textChanged.connect(self.vgnr_update)
+        self.shift_key.textChanged.connect(self.vgnr_update)
 
         # RSA
         self.rsa = QGroupBox(str("RSA"))
-        poppabox.addWidget(self.rsa, 8, 1)
+        self.rsa.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.rsa, 11, 1, 5, 1)
 
         # Hash
         self.hash = QGroupBox(str("Hash"))
-        poppabox.addWidget(self.hash, 5, 1, 5, 1)
+        self.hash.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.hash, 21, 1, 5, 1)
+
         self.hash_msg_box = QLineEdit()
-        poppabox.addWidget(self.hash_msg_box, 6, 1)
+        poppabox.addWidget(self.hash_msg_box, 22, 1)
 
         self.type_box.textChanged.connect(self.hash_update)
         
         # Diffie-Hellman
         self.diffie_hellman = QGroupBox(str("Diffie-Hellman"))
-        poppabox.addWidget(self.diffie_hellman, 10, 1)
+        self.diffie_hellman.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        poppabox.addWidget(self.diffie_hellman, 23, 1)
 
         # Add the horizontal layout to the vertical layout
         vbox.addLayout(hbox)
@@ -136,7 +154,16 @@ class GUI(QWidget):
 
         text = IscProtocol.shift(msg, key)
         self.shifted.setText(text)
-        
+       
+    def vgnr_update(self):
+        msg = self.type_box.text()
+        key = self.vgnr_key.text()
+
+        enc_text = IscProtocol.enc_vgnr(msg, key)
+        self.encrypted_vgnr.setText(enc_text)
+
+        dec_text = IscProtocol.dec_vgnr(msg, key)
+        self.decrypted_vgnr.setText(dec_text)
 
     def hash_update(self):
         text = IscProtocol.enc_hash(self.type_box.text())
@@ -174,7 +201,7 @@ class GUI(QWidget):
         # Response message
         try:
             response = IscProtocol.dec_msg(self.client_socket.recv(1024))
-
+            
             response_font = QFont('Arial', 14)
             response_color = QColor(50, 200, 50)
             time = datetime.datetime.now().strftime("%d-%m-%Y (%H:%M:%S)")

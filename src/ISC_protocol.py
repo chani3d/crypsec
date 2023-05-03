@@ -58,9 +58,7 @@ class IscProtocol:
         elif btostr.startswith('ISCs'):
             cleanstr = btostr.replace('ISCs', '')
 
-
         return cleanstr
-
 
     # Shift
     def shift(msg, key):
@@ -68,70 +66,126 @@ class IscProtocol:
 
         for element in msg:
             cryptedstring += chr(ord(element) + key)
-            
+
         return cryptedstring
 
-
     # Vigenere
-    def enc_vgnr(plaintext, key):
-        cipher_text = []
-        for i in range(len(plaintext)):
-            x = (ord(plaintext[i]) +
-                 ord(key[i])) % 26
-            x += ord('A')
-            cipher_text.append(chr(x))
-        return("" . join(cipher_text))
+    def enc_vgnr(msg, key):
+        ciphered_msg = ""
+        key_index = 0
+        for char in msg:
+            if char.isalpha():
+                # Get the numerical value of the character, where A=0, B=1, etc.
+                char_num = ord(char.upper()) - 65
+                # Get the numerical value of the corresponding key character
+                key_char_num = ord(key[key_index % len(key)].upper()) - 65
+                # Add the two values together and take the result modulo 26 to get the encoded character value
+                encoded_num = (char_num + key_char_num) % 26
+                # Convert the encoded value back to a character and append it to the ciphertext
+                ciphered_msg += chr(encoded_num + 65)
+                # Increment the key index
+                key_index += 1
+            else:
+                # Non-alphabetic characters are copied as they are
+                ciphered_msg += char
+        return ciphered_msg
 
-    def dec_vgnr(ciphertext, key):
-        # Repeat the keyword to match the length of the ciphertext
-        keyword = (keyword * (len(ciphertext) // len(keyword) + 1))[:len(ciphertext)]
-
-        # Generate the plaintext by shifting each character of the ciphertext backwards by the
-        # corresponding character of the keyword using the Vigenère table
-        plaintext = ''
-        for i in range(len(ciphertext)):
-            ciphertext_char = ciphertext[i]
-            keyword_char = keyword[i]
-            shift = ord(keyword_char) - ord('A')
-            plaintext_char = chr((ord(ciphertext_char) - ord('A') - shift) % 26 + ord('A'))
-            plaintext += plaintext_char
-
+    def dec_vgnr(ciphertext, keyword):
+        plaintext = ""
+        keyword_index = 0
+        for c in ciphertext:
+            if c.isalpha():
+                # Determine the shift value for the current character
+                shift = ord(keyword[keyword_index % len(keyword)]) - ord('a')
+                # Decrypt the current character using the shift value
+                if c.isupper():
+                    plaintext += chr((ord(c) - shift - 65) % 26 + 65)
+                else:
+                    plaintext += chr((ord(c) - shift - 97) % 26 + 97)
+                # Move to the next letter in the keyword
+                keyword_index += 1
+            else:
+                # Keep non-alphabetic characters as-is
+                plaintext += c
         return plaintext
 
     # RSA
-    def generate_keys():
-        # Choose two large distinct prime numbers
-        p = 31
-        q = 37
 
-        # Calculate n and phi(n)
+    def __init__(self, p=None, q=None):
+        if p is not None and q is not None:
+            self.public_key, self.private_key = self.generate_RSA_keys(p, q)
+
+    def euclidean_algorithm(self, a, b):
+        if a == 0:
+            return (b, 0, 1)
+        else:
+            g, y, x = self.euclidean_algorithm(b % a, a)
+            return (g, x - (b // a) * y, y)
+
+    def modular_inverse(self, a, m):
+        g, x, y = self.euclidean_algorithm(a, m)
+        if g != 1:
+            raise Exception('Modular inverse does not exist')
+        else:
+            return x % m
+
+    """
+    An important thing for RSA !!! : do not generate private and public keys separately (two different methods), 
+    otherwise we won't be able to decryp well as p and q from first method can change in the second one !!!
+    """
+
+    def generate_RSA_keys(self, p, q):
+        # Choose 2 prime numbers (p and q)
         n = p * q
-        phi_n = (p - 1) * (q - 1)
 
-        # Choose an integer e such that 1 < e < phi(n) and gcd(e, phi(n)) = 1
-        e = random.randint(2, phi_n - 1)
-        while math.gcd(e, phi_n) != 1:
-            e = random.randint(2, phi_n - 1)
+        # Calculate k
+        k = (p - 1) * (q - 1)
 
-        # Calculate the modular multiplicative inverse d of e modulo phi(n)
-        d = pow(e, -1, phi_n)
+        # Choose e < k coprime with k
+        e = random.randrange(1, k)
+        while math.gcd(e, k) != 1:
+            e = random.randrange(1, k)
 
-        # Return the public and private keys as tuples of two values each: (n, e) and (n, d)
-        public_key = (n, e)
-        private_key = (n, d)
+        # Calculate d (1 = d * e + b * k) (b < 0)
+        d = self.modular_inverse(e, k)
 
-        return (public_key, private_key)
+        # Return the public key (n, e) and the private key (n, d)
+        return (n, e), (n, d)
 
-    def dec_rsa(msg, key):
-        n, k = key
-        return pow(message, k, n)
+    def enc_rsa(self, public_key, msg):
+        n, e = public_key
+
+        # Convert each letter of the string to a number
+        letters_to_numbers = [ord(element.lower()) - 96 if element.isalpha() else 0 for element in msg]
+
+        encrypted_msg = [pow(num, e, n) for num in letters_to_numbers]
+        return encrypted_msg
+
+    def dec_rsa(self, private_key, encrypted_msg):
+        n, d = private_key
+
+        numbers = [pow(num, d, n) for num in encrypted_msg]
+
+        # Convert each number of the encrypted message to a letter
+        decrypted_msg = ''.join([chr(num + 96).upper() if num > 0 else ' ' for num in numbers])
+
+        return decrypted_msg
+
     # Hash
     def enc_hash(msg):
         bytedstring = msg.encode('utf-8')
         h = hashlib.sha256(bytedstring).hexdigest()
         return h
-        
-    plaintext = 'hello world'
-    key = 'key'    
-    # Test
-    print(enc_vgnr(plaintext, key))
+
+
+tryy = IscProtocol()
+p = 83
+q = 97
+public_key, private_key = tryy.generate_RSA_keys(p, q)
+msg = 'hello im trying to survive'
+encrypted_msg = tryy.enc_rsa(public_key, msg)
+print(f'The encrypted message is: {encrypted_msg}')
+decrypted_msg = tryy.dec_rsa(private_key, encrypted_msg)
+print(f'The decrypted message is: {decrypted_msg}')
+
+print(f'private key is: {private_key} and public key is: {public_key}')
