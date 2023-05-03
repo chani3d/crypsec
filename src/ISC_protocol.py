@@ -111,9 +111,14 @@ class IscProtocol:
 
     # RSA
 
-    def __init__(self, p=None, q=None):
-        if p is not None and q is not None:
-            self.public_key, self.private_key = self.generate_RSA_keys(p, q)
+    # Knuth & Lewis Linear Congruential Generator (fake rng)
+    def knuth_lewis_lcg(self, seed):
+        a = 1664525
+        c = 1013904223
+        m = 2 ** 32
+        while True:
+            seed = (a * seed + c) % m
+            yield seed
 
     def euclidean_algorithm(self, a, b):
         if a == 0:
@@ -152,22 +157,30 @@ class IscProtocol:
         # Return the public key (n, e) and the private key (n, d)
         return (n, e), (n, d)
 
-    def enc_rsa(self, public_key, msg):
+    def enc_rsa(self, public_key, msg, seed):
         n, e = public_key
 
         # Convert each letter of the string to a number
         letters_to_numbers = [ord(element.lower()) - 96 if element.isalpha() else 0 for element in msg]
 
-        encrypted_msg = [pow(num, e, n) for num in letters_to_numbers]
+        # LCG
+        rng = self.knuth_lewis_lcg(seed)
+
+        # Encrypt each number of the message
+        encrypted_msg = [pow(num ^ next(rng), e, n) for num in letters_to_numbers]
         return encrypted_msg
 
-    def dec_rsa(self, private_key, encrypted_msg):
+    def dec_rsa(self, private_key, encrypted_msg, seed):
         n, d = private_key
 
-        numbers = [pow(num, d, n) for num in encrypted_msg]
+        # numbers = [pow(num, d, n) for num in encrypted_msg]
+        # LCG
+        rng = self.knuth_lewis_lcg(seed)
 
         # Convert each number of the encrypted message to a letter
-        decrypted_msg = ''.join([chr(num + 96).upper() if num > 0 else ' ' for num in numbers])
+        # decrypted_msg = ''.join([chr(num + 96).upper() if num > 0 else ' ' for num in numbers])
+        decrypted_msg = ''.join(
+            [chr(pow(num ^ next(rng), d, n) + 96).upper() if num > 0 else ' ' for num in encrypted_msg])
 
         return decrypted_msg
 
@@ -177,15 +190,73 @@ class IscProtocol:
         h = hashlib.sha256(bytedstring).hexdigest()
         return h
 
+    # Diffie-Hellmann
 
-tryy = IscProtocol()
+    def mod_exp(base, exp, mod):
+        """
+        Calculates the modular exponentiation using the fast exponentiation algorithm.
+        """
+        result = 1
+        while exp > 0:
+            if exp % 2 == 1:
+                result = (result * base) % mod
+            base = (base * base) % mod
+            exp //= 2
+        return result
+
+    def is_prime(num):
+        """
+        Checks whether a given number is prime.
+        """
+        if num <= 1:
+            return False
+        elif num <= 3:
+            return True
+        elif num % 2 == 0 or num % 3 == 0:
+            return False
+        i = 5
+        while i * i <= num:
+            if num % i == 0 or num % (i + 2) == 0:
+                return False
+            i += 6
+        return True
+
+    def generate_prime(min_val, max_val):
+        """
+        Generates a prime number between the given range (inclusive).
+        """
+        prime = None
+        while prime is None:
+            num = random.randint(min_val, max_val)
+            if is_prime(num):
+                prime = num
+        return prime
+
+    def generate_keys(self):
+        """
+        Generates the private and public keys for the key exchange.
+        """
+        self.a = random.randint(1, self.p - 1)
+        self.A = mod_exp(self.g, self.a, self.p)
+        return self.A
+
+    def generate_shared_secret(self, B):
+        """
+        Generates the shared secret key using the public key of the other party.
+        """
+        self.shared_secret = mod_exp(B, self.a, self.p)
+        return self.shared_secret
+
+
+hello = IscProtocol()
 p = 83
 q = 97
-public_key, private_key = tryy.generate_RSA_keys(p, q)
+public_key, private_key = hello.generate_RSA_keys(p, q)
 msg = 'hello im trying to survive'
-encrypted_msg = tryy.enc_rsa(public_key, msg)
+seed = 123456789
+encrypted_msg = hello.enc_rsa(public_key, msg, seed)
 print(f'The encrypted message is: {encrypted_msg}')
-decrypted_msg = tryy.dec_rsa(private_key, encrypted_msg)
+decrypted_msg = hello.dec_rsa(private_key, encrypted_msg, seed)
 print(f'The decrypted message is: {decrypted_msg}')
+print(f'Private key is: {private_key} and public key is: {public_key}')
 
-print(f'private key is: {private_key} and public key is: {public_key}')

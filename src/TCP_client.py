@@ -6,7 +6,7 @@ class TCPClient:
 
     def server_connection(self):
         host = '153.109.124.198'
-        port = 6000  # socket server port number
+        port = 5051  # socket server port number
         self.client_socket = socket.socket()  # instantiate
         self.client_socket.connect((host, port))  # connect to the server
         self.client_socket.settimeout(0.1)

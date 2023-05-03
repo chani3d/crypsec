@@ -76,4 +76,89 @@
 # print(public_key)
 # print(private_key)
 
+import random
+import math
+import hashlib
 
+def euclidean_algorithm(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = euclidean_algorithm(b % a, a)
+        return (g, x - (b // a) * y, y)
+
+def modular_inverse(a, m):
+    g, x, y = euclidean_algorithm(a, m)
+    if g != 1:
+        raise Exception('Modular inverse does not exist')
+    else:
+        return x % m
+
+def generate_RSA_keys(p, q):
+    # Choose 2 prime numbers (p and q)
+    n = p * q
+
+    # Calculate k
+    k = (p - 1) * (q - 1)
+
+    # Choose e < k coprime with k
+    e = random.randrange(1, k)
+    while math.gcd(e, k) != 1:
+        e = random.randrange(1, k)
+
+    # Calculate d (1 = d * e + b * k) (b < 0)
+    d = modular_inverse(e, k)
+
+    # Return the public key (n, e) and the private key (n, d)
+    return (n, e), (n, d)
+
+def knuth_lewis_lcg(seed):
+    a = 1664525
+    c = 1013904223
+    m = 2**32
+    x = seed
+    while True:
+        x = (a*x + c) % m
+        yield x
+
+def enc_rsa(public_key, msg, seed):
+    n, e = public_key
+
+    # Convert each letter of the string to a number
+    letters_to_numbers = [ord(element.lower()) - 96 if element.isalpha() else 0 for element in msg]
+
+    # Generate the LCG
+    gen = knuth_lewis_lcg(seed)
+
+    # Encrypt each number of the message
+    encrypted_msg = [pow(num ^ next(gen), e, n) for num in letters_to_numbers]
+    return encrypted_msg
+
+def dec_rsa(private_key, encrypted_msg, seed):
+    n, d = private_key
+
+    # Generate the LCG
+    gen = knuth_lewis_lcg(seed)
+
+    # Decrypt each number of the encrypted message and convert it back to a letter
+    decrypted_msg = ''.join([chr(pow(num ^ next(gen), d, n) + 96).upper() if num > 0 else ' ' for num in encrypted_msg])
+
+    return decrypted_msg
+
+# Hash
+def enc_hash(msg):
+    bytedstring = msg.encode('utf-8')
+    h = hashlib.sha256(bytedstring).hexdigest()
+    return h
+
+# Example usage
+p = 83
+q = 97
+public_key, private_key = generate_RSA_keys(p, q)
+msg = 'hello im trying to survive'
+seed = 123456789
+encrypted_msg = enc_rsa(public_key, msg, seed)
+print(f'The encrypted message is: {encrypted_msg}')
+decrypted_msg = dec_rsa(private_key, encrypted_msg, seed)
+print(f'The decrypted message is: {decrypted_msg}')
+print(f'Private key is: {private_key} and public key is: {public_key}')
