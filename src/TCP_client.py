@@ -6,7 +6,7 @@ class TCPClient:
 
     def server_connection(self):
         host = '153.109.124.198'
-        port = 5051  # socket server port number
+        port = 6000  # socket server port number
         self.client_socket = socket.socket()  # instantiate
         self.client_socket.connect((host, port))  # connect to the server
         self.client_socket.settimeout(0.1)
@@ -18,7 +18,7 @@ class TCPClient:
     def receive_message_server(self):
         IscProtocol.dec_msg(self.client_socket.recv(1024))
 
-
+## Before the GUI was implementedm now just for tests:
 def client_program():
     host = "153.109.124.198"
     port = 6000  # socket server port number
@@ -45,5 +45,3 @@ def client_program():
 
 if __name__ == '__main__':
     client_program()
-
-# print(IscProtocol.message("Hello"))

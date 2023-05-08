@@ -3,7 +3,7 @@ import socket
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, QLineEdit, QTextEdit, QLabel, \
     QFileDialog, QComboBox, QGroupBox, QRadioButton
-from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor
+from PyQt6.QtGui import QIcon, QFont, QColor, QTextCursor, QPixmap
 from PyQt6.QtCore import Qt, QTimer
 
 from ISC_protocol import IscProtocol
@@ -52,7 +52,7 @@ class GUI(QWidget):
         self.msg_box.setReadOnly(True)
         self.msg_box.setTextColor(QColor(0, 128, 0))
         vbox.addWidget(self.msg_box)
-        poppabox.addLayout(vbox, 1, 0, 40, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
+        poppabox.addLayout(vbox, 1, 0, 22, 1) # Adds the widget at position 1x0 and occupies 15 rows and 1 column
         self.msg_box.setStyleSheet(msg_box_color)
 
         # Add a text box for typing messages
@@ -227,8 +227,12 @@ class GUI(QWidget):
         # Sends message
         if message == '':
             pass
-        else:
+        elif '.png' in message:
+            qp = QPixmap()
+            picsent = qp.loadFromData(IscProtocol.enc_msg(message))
             TCPClient.send_message_server(self, message)
+        else:
+            TCPClient.send_message_server(self, picsent)
 
             # Add the message to the message box
             message_font = QFont('Arial', 14)

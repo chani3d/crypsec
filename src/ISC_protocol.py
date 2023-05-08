@@ -40,7 +40,7 @@ class IscProtocol:
                 # msgbyte += ((0).to_bytes(4, 'big')) + element.encode('utf-8')
                 msgbyte += (ord(element)).to_bytes(4, 'big')
 
-            fullmsg = header + msgtype + length + msgbyte
+            fullmsg = header + msgtype + gth + msgbyte
 
         return fullmsg
 
@@ -192,10 +192,9 @@ class IscProtocol:
 
     # Diffie-Hellmann
 
+
+    #Calculates the modular exponentiation.
     def mod_exp(base, exp, mod):
-        """
-        Calculates the modular exponentiation using the fast exponentiation algorithm.
-        """
         result = 1
         while exp > 0:
             if exp % 2 == 1:
@@ -204,10 +203,10 @@ class IscProtocol:
             exp //= 2
         return result
 
+    # Checks whether a given number is prime.
     def is_prime(num):
-        """
-        Checks whether a given number is prime.
-        """
+        
+        
         if num <= 1:
             return False
         elif num <= 3:
@@ -221,10 +220,8 @@ class IscProtocol:
             i += 6
         return True
 
+    # Generates a prime number between the given range.
     def generate_prime(min_val, max_val):
-        """
-        Generates a prime number between the given range (inclusive).
-        """
         prime = None
         while prime is None:
             num = random.randint(min_val, max_val)
@@ -232,31 +229,16 @@ class IscProtocol:
                 prime = num
         return prime
 
+    # Generates the private and public keys for the key exchange.
     def generate_keys(self):
-        """
-        Generates the private and public keys for the key exchange.
-        """
         self.a = random.randint(1, self.p - 1)
         self.A = mod_exp(self.g, self.a, self.p)
         return self.A
 
+    # Generates the shared secret key using the public key of the other party.
     def generate_shared_secret(self, B):
-        """
-        Generates the shared secret key using the public key of the other party.
-        """
         self.shared_secret = mod_exp(B, self.a, self.p)
         return self.shared_secret
 
 
-hello = IscProtocol()
-p = 83
-q = 97
-public_key, private_key = hello.generate_RSA_keys(p, q)
-msg = 'hello im trying to survive'
-seed = 123456789
-encrypted_msg = hello.enc_rsa(public_key, msg, seed)
-print(f'The encrypted message is: {encrypted_msg}')
-decrypted_msg = hello.dec_rsa(private_key, encrypted_msg, seed)
-print(f'The decrypted message is: {decrypted_msg}')
-print(f'Private key is: {private_key} and public key is: {public_key}')
-
+    image_try = enc_msg('pic.png')
