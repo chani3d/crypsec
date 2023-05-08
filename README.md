@@ -1,6 +1,6 @@
 # Yepzhapp Chat App 📱💬 | SJCG - ISC 2023 | 103.2 - Cryptographie et sécurité - Chat app project
 
-### Features 🔒
+## Features 🔒
 
 - Sending messages using ISCP (ISC Protocol) ✅
 - Receiving messages using ISCP ✅
